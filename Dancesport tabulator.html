@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competition Tabulator</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f3f4f6;
+            --judge-dark: #111827;
+            /* Dark color for Judge Headers */
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* --- SCORING CARD LAYOUT --- */
+        .scoring-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+            /* GRID: 4 Columns (Name | Judge 1 | Judge 2 | Judge 3) */
+            display: grid;
+            grid-template-columns: 250px 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* Column 1: Contestant Name */
+        .name-col {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .name-col input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .add-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .add-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Columns 2, 3, 4: Judges */
+        .judge-col {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .judge-header {
+            background-color: var(--judge-dark);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Input Labels */
+        .criteria-group {
+            text-align: center;
+        }
+
+        .criteria-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #4b5563;
+        }
+
+        .criteria-group input {
+            width: 80%;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+
+        /* Table Styling to match your image */
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            /* Rounded corners */
+            overflow: hidden;
+            /* Ensures header corners are rounded */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            background-color: #020617;
+            /* Very dark blue/black */
+            color: white;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        th {
+            padding: 15px;
+            vertical-align: middle;
+            /* Centers text vertically */
+        }
+
+        .sub-text {
+            font-size: 1rem;
+            color: #fbbf24;
+            /* Gold Yellow Color*/
+            font-weight: 800;
+            margin-top: 5px;
+        }
+
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        td:nth-last-child(2) {
+            color: #2563eb;
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+
+        /* Delete Button Style */
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .delete-btn:hover {
+            background-color: #dc2626;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--judge-dark);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🏆 Dancesport Event Tabulator</h1>
+        </header>
+
+        <div class="scoring-card">
+
+            <div class="name-col">
+                <div>
+                    <label style="font-weight:bold;">Contestant Group Name</label>
+                    <input type="text" id="cName" placeholder="Enter a Group">
+                </div>
+                <button class="add-btn" onclick="calculateScore()">+ Add & Rank</button>
+            </div>
+
+            <div class="judge-col">
+                <div class="judge-header">Judge 1</div>
+
+                <div class="criteria-group">
+                    <label>Technical Execution and Synchronization (40%)</label>
+                    <input type="number" id="j1-exec" placeholder="0-100">
+                </div>
+                <div class="criteria-group">
+                    <label>Choreography and Formation (30%)</label>
+                    <input type="number" id="j1-art" placeholder="0-100">
+                </div>
+                <div class="criteria-group">
+                    <label>Presentation And Showmanship (30%)</label>
+                    <input type="number" id="j1-diff" placeholder="0-100">
+                </div>
+            </div>
+
+            <div class="judge-col">
+                <div class="judge-header">Judge 2</div>
+
+                <div class="criteria-group">
+                    <label>Technical Execution and Synchronization (40%)</label>
+                    <input type="number" id="j2-exec" placeholder="0-100">
+                </div>
+                <div class="criteria-group">
+                    <label>Choreography and Formation (30%)</label>
+                    <input type="number" id="j2-art" placeholder="0-100">
+                </div>
+                <div class="criteria-group">
+                    <label>Presentation And Showmanship (30%)</label>
+                    <input type="number" id="j2-diff" placeholder="0-100">
+                </div>
+            </div>
+
+            <div class="judge-col">
+                <div class="judge-header">Judge 3</div>
+
+                <div class="criteria-group">
+                    <label>Technical Execution and Synchronization (40%)</label>
+                    <input type="number" id="j3-exec" placeholder="0-100">
+                </div>
+                <div class="criteria-group">
+                    <label>Choreography and Formation (30%)</label>
+                    <input type="number" id="j3-art" placeholder="0-100">
+                </div>
+                <div class="criteria-group">
+                    <label>Presentation and Showmanship (30%)</label>
+                    <input type="number" id="j3-diff" placeholder="0-100">
+                </div>
+            </div>
+
+        </div>
+
+        <table id="leaderboard">
+            <thead>
+                <tr class="table-header">
+                    <th>Rank</th>
+                    <th>Contestant Group</th>
+                    <th>Technical Execution and Synchronization <br><span class="sub-text">(40%)</span></th>
+                    <th>Choreography and Formation <br><span class="sub-text">(30%)</span></th>
+                    <th>Presentation and Showmanship <br><span class="sub-text">(30%)</span></th>
+                    <th>Final Score</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function calculateScore() {
+            // 1. Get Name
+            const name = document.getElementById('cName').value;
+            if (name === "") { alert("Please enter a name!"); return; }
+
+            // Helper to get value of an input ID safely
+            const getVal = (id) => Number(document.getElementById(id).value) || 0;
+
+            // 2. Calculate Average for Technical execution and synchronization (J1 + J2 + J3) / 3
+            let avgExec = (getVal('j1-exec') + getVal('j2-exec') + getVal('j3-exec')) / 3;
+
+            // 3. Calculate Average for Choreography and formation 
+            let avgArt = (getVal('j1-art') + getVal('j2-art') + getVal('j3-art')) / 3;
+
+            // 4. Calculate Average for Presentation And Showmanship
+            let avgDiff = (getVal('j1-diff') + getVal('j2-diff') + getVal('j3-diff')) / 3;
+
+            // 6. Calculate Final Weighted Score
+            // Formula: (Exec * 40%) + (Art * 30%) + (Diff * 30%) + (Aud * 10%)
+            let finalScore = (avgExec * 0.40) + (avgArt * 0.30) + (avgDiff * 0.30);
+
+            // 7. Add Row to Table (Initially with Rank "0")
+            const tbody = document.getElementById('leaderboard').querySelector('tbody');
+            const newRow = tbody.insertRow();
+
+            newRow.innerHTML = `
+            <td class="rank-cell" style="font-weight:bold; font-size:1.2em;">0</td>
+            <td style="font-weight:bold; text-align:left;">${name}</td>
+            <td>${avgExec.toFixed(1)}</td>
+            <td>${avgArt.toFixed(1)}</td>
+            <td>${avgDiff.toFixed(1)}</td>
+            <td class="final-score" style="font-weight:bold; color:#2563eb; font-size:1.1em">${finalScore.toFixed(2)}%</td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+        `;
+
+            // 8. Clear inputs
+            document.querySelectorAll('input').forEach(input => input.value = '');
+
+            // 9. TRIGGER THE SORTING!
+            updateRankings();
+        }
+
+        // --- NEW FUNCTION: Sorts the table and updates Rank numbers ---
+        function updateRankings() {
+            const tbody = document.querySelector("#leaderboard tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+
+            // Sort rows based on Final Score (Column 6, which is the 7th column)
+            rows.sort((a, b) => {
+                const scoreA = parseFloat(a.querySelector(".final-score").innerText);
+                const scoreB = parseFloat(b.querySelector(".final-score").innerText);
+                return scoreB - scoreA; // Sort Highest to Lowest
+            });
+
+            // Re-append rows in new order and update Rank number
+            rows.forEach((row, index) => {
+                const rankCell = row.querySelector(".rank-cell");
+                const rank = index + 1;
+                rankCell.innerText = rank;
+
+                // Optional: Add Gold/Silver/Bronze colors
+                rankCell.style.color = "#1f2937"; // Default color
+                if (rank === 1) rankCell.style.color = "#d97706"; // Gold
+                if (rank === 2) rankCell.style.color = "#9ca3af"; // Silver
+                if (rank === 3) rankCell.style.color = "#b45309"; // Bronze
+
+                tbody.appendChild(row);
+            });
+        }
+
+        // Function to delete a row and re-calculate rankings
+        function deleteRow(btn) {
+            const row = btn.closest('tr');
+            row.remove();
+            updateRankings(); // Re-rank remaining contestants
+        }
+    </script>
+
+</body>
+
+</html>
